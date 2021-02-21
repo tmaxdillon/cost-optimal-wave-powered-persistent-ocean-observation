@@ -5,7 +5,7 @@ opt.bf.m = 1;
 opt.bf.n = 1;
 opt.allscenuses = 0;
 opt.alllocuses = 0;
-opt.sens = 0;
+opt.sens = 0; %sensitivity analysis (see line 177)
 opt.senssm = 0;
 c = 1;  %use case 1:ST 2:LT
 loc = 'irmSea'; %location
@@ -16,61 +16,40 @@ if ~exist('batchtype','var')
     batchc = [];
 end
 if isequal(batchtype,'ssm')
-    econ.wave.scen = batchscen; %scenario indicator 1:C,2:OC,3:OD
-    opt.bf.m = 500;
-    opt.bf.n = 500;
+    opt.bf.m = 500; %optimization discretization
+    opt.bf.n = 500; %optimization discretization
+    %leave the following variables as is
+    econ.wave.scen = batchscen;
     opt.allscenuses = 0;
     opt.alllocuses = 0;
     opt.sens = 0;
-    opt.tdsens = 0;
     opt.senssm = 1;
-    opt.highresobj = 0;
     c = batchc;
     loc = batchloc;
 elseif isequal(batchtype,'alllocuses')
+    opt.bf.m = 500; %optimization discretization
+    opt.bf.n = 500; %optimization discretization
+    %leave the following variables as is
     econ.wave.scen = batchscen; 
-    opt.bf.m = 500;
-    opt.bf.n = 500;
     opt.allscenuses = 0;
     opt.alllocuses = 1;
     opt.sens = 0;
-    opt.tdsens = 0;
     opt.senssm = 0;
-    opt.highresobj = 0;
     c = [];
     loc = [];
-elseif isequal(batchtype,'hros')
-    econ.wave.scen = 1; %scenario indicator 1:C,2:OC,3:OD
-    opt.bf.m = 750;
-    opt.bf.n = 750;
-    opt.allscenuses = 0;
-    opt.alllocuses = 1;
-    opt.sens = 0;
-    opt.tdsens = 0;
-    opt.senssm = 0;
-    opt.highresobj = 1;
-    c = batchc;
-    loc = batchloc;
 elseif isequal(batchtype,'sens')
-    opt.tuning_array = linspace(0,2.25,10);
-    opt.tuned_parameter = 'wiv';
+    opt.bf.m = 100; %optimization discretization
+    opt.bf.n = 100; %optimization discretization
+    opt.tuning_array = linspace(0,2.25,10); %sensitivity array
+    opt.tuned_parameter = 'wiv'; %sensitivity parameter (see doSens.m)
+    %leave the following variables as is
     econ.wave.scen = batchscen; 
-    opt.bf.m = 100;
-    opt.bf.n = 100;
     opt.allscenuses = 0;
     opt.alllocuses = 0;
     opt.sens = 1;
-    opt.tdsens = 0;
     opt.senssm = 0;
-    opt.highresobj = 0;
     c = batchc;
     loc = batchloc;
-end
-
-%check to see if HPC
-if feature('numcores') < 36
-    opt.bf.n = 1;
-    opt.bf.m = 1;
 end
 
 %strings
