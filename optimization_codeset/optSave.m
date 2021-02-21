@@ -1,7 +1,6 @@
-function [] = optSave(prepath,name,batchtype,batchpm,batchscen, ...
+function [] = optSave(prepath,name,batchtype,batchscen, ...
     batchloc,batchc)
 
-%clearvars -except name prepath batchtype scen loc c
 optScript
 
 if exist('s1','var') %save multiple structures
@@ -13,7 +12,7 @@ else %save single structure
         stru.(name) = multStruct;
     elseif exist('allLocUses','var')
         stru.(name) = allLocUses;
-    elseif exit('allScenUses','var')
+    elseif exist('allScenUses','var')
         stru.(name) = allScenUses;
     else
         stru.(name) = optStruct;

@@ -3,15 +3,8 @@ function [output,opt] = optWave(opt,data,atmo,batt,econ,uc,bc,wave)
 %set kW and Smax mesh
 opt.kW_1 = 0.215; %lower limit for wecsim is 0.2143
 opt.Smax_1 = 1;
-if ~opt.highresobj
-    opt.kW_m = opt.bf.M; %[kW]
-    opt.Smax_n = opt.bf.N; %[kWh]
-else
-    opt.bf.loc_ind = find(contains(opt.locations,data.loc, ...
-        'IgnoreCase',false));
-    opt.kW_m = opt.bf.M_hros(opt.bf.loc_ind);
-    opt.Smax_n = opt.bf.N_hros(opt.bf.loc_ind);
-end
+opt.kW_m = opt.bf.M; %[kW]
+opt.Smax_n = opt.bf.N; %[kWh]
 
 %set sensitivity modifiers to 1 if absent and to value if existing
 if ~isfield(wave,'cw_mod')
@@ -24,7 +17,7 @@ if isfield(data,'dist_mod')
     data.dist = data.dist_mod; %dist to coast modifier
 end
 if isfield(econ.vessel,'tmt_enf') && ...
-        (opt.sens || opt.tdsens || opt.senssm) && ...
+        (opt.sens || opt.senssm) && ...
         isequal(opt.tuned_parameter,'tmt')
     econ.vessel.t_mosv = econ.vessel.tmt_enf; %osv maintenance time
     econ.vessel.t_ms = econ.vessel.tmt_enf; %spec maintenance time
@@ -83,7 +76,7 @@ if isempty(gcp('nocreate')) %no parallel pool running
         parpool(cores);
     end
 end
-%parallel computing via parfor
+%parallel computing using parfor
 tGrid = tic;
 disp(['Populating grid values: m=' num2str(m) ', n=' num2str(n)])
 parfor (i = 1:m*n,opt.bf.maxworkers)
@@ -119,13 +112,6 @@ output.min.batt_dyn_lc = batt.lc_nom*(output.min.Smax/ ...
 output.min.CF = mean(output.min.P)/(1000*output.min.kW);
 output.min.cw_avg = mean(output.min.cw); %average capture width
 output.min.cwr_avg = mean(output.min.cw_avg/output.min.width); %average cwr
-%cycles per year
-% output.min.cyc60 = countCycles(output.min.S,output.min.Smax,60)/ ...
-%     (length(data.wave.time)/8760);
-% output.min.cyc80 = countCycles(output.min.S,output.min.Smax,80)/ ...
-%     (length(data.wave.time)/8760);
-% output.min.cyc100 = countCycles(output.min.S,output.min.Smax,100)/ ...
-%     (length(data.wave.time)/8760);
 
 end
 

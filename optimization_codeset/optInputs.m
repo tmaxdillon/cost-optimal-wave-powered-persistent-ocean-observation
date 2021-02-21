@@ -1,18 +1,14 @@
 %simulation settings
 %interactive job
 econ.wave.scen = 1; %scenario indicator 1:C,2:OC,3:OD
-opt.bf.m = 500;
-opt.bf.n = 500;
+opt.bf.m = 1;
+opt.bf.n = 1;
 opt.allscenuses = 0;
 opt.alllocuses = 0;
 opt.sens = 0;
-opt.tdsens = 0;
 opt.senssm = 0;
-opt.highresobj = 0;
-pm = 3; %power module, 1:Wi 2:In 3:Wa 4:Di
 c = 1;  %use case 1:ST 2:LT
 loc = 'irmSea'; %location
-%batch = false;
 if ~exist('batchtype','var')
     batchtype = [];
     batchscen = [];
@@ -29,10 +25,8 @@ if isequal(batchtype,'ssm')
     opt.tdsens = 0;
     opt.senssm = 1;
     opt.highresobj = 0;
-    pm = 3;
     c = batchc;
     loc = batchloc;
-    %batch = true;
 elseif isequal(batchtype,'alllocuses')
     econ.wave.scen = batchscen; 
     opt.bf.m = 500;
@@ -43,10 +37,8 @@ elseif isequal(batchtype,'alllocuses')
     opt.tdsens = 0;
     opt.senssm = 0;
     opt.highresobj = 0;
-    pm = batchpm;
     c = [];
     loc = [];
-    %batch = true;
 elseif isequal(batchtype,'hros')
     econ.wave.scen = 1; %scenario indicator 1:C,2:OC,3:OD
     opt.bf.m = 750;
@@ -57,10 +49,8 @@ elseif isequal(batchtype,'hros')
     opt.tdsens = 0;
     opt.senssm = 0;
     opt.highresobj = 1;
-    pm = 3;
     c = batchc;
     loc = batchloc;
-    %batch = true;
 elseif isequal(batchtype,'sens')
     opt.tuning_array = linspace(0,2.25,10);
     opt.tuned_parameter = 'wiv';
@@ -73,10 +63,8 @@ elseif isequal(batchtype,'sens')
     opt.tdsens = 0;
     opt.senssm = 0;
     opt.highresobj = 0;
-    pm = 3;
     c = batchc;
     loc = batchloc;
-    %batch = true;
 end
 
 %check to see if HPC
@@ -96,24 +84,13 @@ opt.wavescens = {'Conservative';'Optimistic Cost';'Optimistic Durability'};
 %polynomial fits
 econ.batt_n = 1;                    %[~]
 econ.wind_n = 1;                    %[~]
-econ.diescost_n = 1;                %[~]
-econ.diesmass_n = 1;                %[~]   
-econ.diessize_n = 1;                %[~]   
-econ.diesburn_n = 1;                %[~]   
 %platform 
 load('mdd_output.mat')
 econ.platform.mdd.cost = cost;          %mooring cost lookup matrix
 econ.platform.mdd.depth = depth;        %mooring cost lookup depth
 econ.platform.mdd.diameter = diameter;  %mooring cost lookup diameter
 clear cost depth diameter e_subsurface e_tension w_tension
-econ.platform.wf = 5;               %weight factor (of light ship)
-econ.platform.steel = 600;          %[$/metric ton]
 econ.platform.t_i = 12;             %[h] additional time on site for inst
-%econ.platform.moorcost = 5.23;      %[$/(m-m)] cost of mooring (no AR)
-econ.platform.anchor = 1666.7;      %[$/m] anchor cost
-econ.platform.anchor_min = 1000;    %minimum anchor cost
-econ.platform.line = 4.83;          %[$/(m-m)] cost of line (no AR)
-econ.platform.bm = 1.5;             %barge multiplier
 %vessel
 econ.vessel.osvcost = 15000;        %[$/day]
 econ.vessel.speed = 10;             %[kts]
@@ -124,25 +101,12 @@ econ.vessel.t_ms = 2;               %[h] time on site for maint (spec)
 econ.batt.enclmult = 1;             %multiplier on battery cost for encl
 %wind
 econ.wind.installed = 10117;        %[$/kW] installed cost (DWR)
-%econ.wind.mim = 137/49;             %marine installment multiplier (CoWR)
-econ.wind.marinization = 1.8;       %[CoWR]
-%solar
-econ.inso.module = 470;             %[$/kW], all SCB
-econ.inso.installation = 270;       %[$/kW]
-econ.inso.electrical = 210;         %[$/kW]
-econ.inso.structural = 100;         %[$/kW]
-econ.inso.marinization = 1.2;       %[~]
 %wave costs
 econ.wave.scenarios = 3;            %number of scenarios
 econ.wave.costmult_con = 10;         %conservative cost multiplier
 econ.wave.costmult_opt = 4;         %optimistic cost multiplier
 econ.wave.lowfail = 0;              %failures per year (optimistic)
 econ.wave.highfail = 1;              %failure per year (conservative)
-%diesel costs
-econ.dies.fcost = .83;              %[$/L] diesel fuel cost
-econ.dies.enclcost = 5000;          %[$]
-econ.dies.enclcap = 1.5;            %[m^3]
-econ.dies.autostart = 3000;         %[$]
 
 %ENERGY
 %wave energy parameters
@@ -161,7 +125,7 @@ agm.beta = 6/10;           %decay exponential for life cycle
 agm.lc_max = 12*5;        %maximum months of operation
 agm.sdr = 5;               %[%/month] self discharge rate
 agm.dmax = .2;             %maximum depth of discharge
-agm.lcm = 1;%battery life cycle model, 1:bolun 2:dyn_lc 3:fixed_lc
+agm.lcm = 1;    %battery life cycle model, 1:bolun 2:dyn_lc 3:fixed_lc
 agm.T = 15;                 %[C] temperature
 agm.EoL = 0.2;              %battery end of life
 agm.rf_os = true;           %toggle using open source  rainflow
@@ -208,45 +172,46 @@ uc(2).turb.lambda = 4;          %turbine interventions
 uc(2).dies.lambda = 1;          %diesel interventions
 
 %sensitivity analaysis
+%if conducting an interactive sensitivity analysis, specify the tuning 
+%array and the tuned parameter here
 if ~isfield(opt,'tuning_array') && ~isfield(opt,'tuned_parameter')
-% opt.tuning_array = [100 95 90 85 80 75 70];
-% opt.tuned_parameter = 'wcp'; %wave cutout percentile
-% opt.tuning_array = [1 2 3 4 5 6 7 8 9 10];
-% opt.tuned_parameter = 'wcm'; %wave cost multiplier
-% opt.tuning_array = [45 50 55 60 65 70 75 80 85 90];
-% opt.tuned_parameter = 'wrp'; %wave rated percentile
-% opt.tuning_array = linspace(.80,1,10);
-% opt.tuned_parameter = 'utp';
-% opt.tuning_array = [10:10:200];
-% opt.tuned_parameter = 'load';
-% opt.tuning_array = [0.01,0.2,.5];
-% opt.tuned_parameter = 'zo';
-% opt.tuning_array = [0,1,2,3,4,5];
-% opt.tuned_parameter = 'utf';
-% opt.tuning_array = [0 .01 .025 .05 .075 .1 .15 .2 .25];
-% opt.tuned_parameter = 'whl'; %wec house load
-% opt.tuning_array = [1 1.2 1.4 1.6 1.8 2];
-% opt.tuned_parameter = 'imf'; %inso marinization factor
-% opt.tuning_array = linspace(0.1,10,10);
-% opt.tuned_parameter = 'btm'; %battery time slope
-% opt.tuning_array = [10 20 30 40 50 60 70 80 90 100];
-% opt.tuned_parameter = 'mbt'; %minimum battery for time added
-% opt.tuning_array = linspace(1/2,2,10);
-% opt.tuned_parameter = 'cwm'; %capture width multiplier
-% opt.tuning_array = 1:1:10;
-% opt.tuned_parameter = 'wcm'; %wave cost multiplier
-% opt.tuning_array = linspace(0,9,50);
-% opt.tuned_parameter = 'wiv'; %wec interventions
-% opt.tuning_array = linspace(1/2,2,10);
-% opt.tuned_parameter = 'dep'; %depth modifier
-% opt.tuning_array = linspace(uc(c).lifetime-3,uc(c).lifetime+3,10);
-% opt.tuned_parameter = 'lft'; %lifetime
+    % opt.tuning_array = [100 95 90 85 80 75 70];
+    % opt.tuned_parameter = 'wcp'; %wave cutout percentile
+    % opt.tuning_array = [1 2 3 4 5 6 7 8 9 10];
+    % opt.tuned_parameter = 'wcm'; %wave cost multiplier
+    % opt.tuning_array = [45 50 55 60 65 70 75 80 85 90];
+    % opt.tuned_parameter = 'wrp'; %wave rated percentile
+    % opt.tuning_array = linspace(.80,1,10);
+    % opt.tuned_parameter = 'utp';
+    % opt.tuning_array = [10:10:200];
+    % opt.tuned_parameter = 'load';
+    % opt.tuning_array = [0.01,0.2,.5];
+    % opt.tuned_parameter = 'zo';
+    % opt.tuning_array = [0,1,2,3,4,5];
+    % opt.tuned_parameter = 'utf';
+    % opt.tuning_array = [0 .01 .025 .05 .075 .1 .15 .2 .25];
+    % opt.tuned_parameter = 'whl'; %wec house load
+    % opt.tuning_array = [1 1.2 1.4 1.6 1.8 2];
+    % opt.tuned_parameter = 'imf'; %inso marinization factor
+    % opt.tuning_array = linspace(0.1,10,10);
+    % opt.tuned_parameter = 'btm'; %battery time slope
+    % opt.tuning_array = [10 20 30 40 50 60 70 80 90 100];
+    % opt.tuned_parameter = 'mbt'; %minimum battery for time added
+    % opt.tuning_array = linspace(1/2,2,10);
+    % opt.tuned_parameter = 'cwm'; %capture width multiplier
+    % opt.tuning_array = 1:1:10;
+    % opt.tuned_parameter = 'wcm'; %wave cost multiplier
+    % opt.tuning_array = linspace(0,9,50);
+    % opt.tuned_parameter = 'wiv'; %wec interventions
+    % opt.tuning_array = linspace(1/2,2,10);
+    % opt.tuned_parameter = 'dep'; %depth modifier
+    % opt.tuning_array = linspace(uc(c).lifetime-3,uc(c).lifetime+3,10);
+    % opt.tuned_parameter = 'lft'; %lifetime
     opt.tuning_array = linspace(10,1400,10)*1000;
     opt.tuned_parameter = 'dtc'; %distance to coast [OPEX]
 end
 
 %optimization parameters
-opt.V = 2;
 opt.bf.M = 8; %[kW] max kW in grid
 opt.bf.N = 500; %[kWh] max Smax in grid
 opt.bf.maxworkers = 36; %maximum cores

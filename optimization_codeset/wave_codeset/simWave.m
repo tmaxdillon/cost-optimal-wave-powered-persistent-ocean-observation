@@ -87,8 +87,6 @@ P = P*1000; %convert to watts
 
 % battery degradation model
 if batt.lcm == 1 %bolun's model
-%     [batt_L,batt_lft] =  irregularDegradation(S/(Smax*1000), ...
-%         data.wave.time',uc.lifetime,batt); %retrospective modeling (old)
     if ~exist('batt_lft','var') %battery never reached EoL
         batt_lft = batt.EoL/batt_L(t)*t*12/(8760); %[mo]
     end
@@ -151,18 +149,13 @@ CapEx = Pmooring + Pinst + Pmtrl + ...
 OpEx = battreplace + wecrepair + vesselcost;
 cost = CapEx + OpEx;
 
+%test to see if uptime requirement was met
 if sum(L == uc.draw)/(length(L)) < uc.uptime
     surv = 0;
     if opt.fmin
         cost = inf;
     end
 end
-% if sum(S > batt_L*Smax*1000)/(length(S)) < uc.uptime
-%     surv = 0;
-%     if opt.fmin
-%         cost = inf;
-%     end
-% end
 
 end
 
