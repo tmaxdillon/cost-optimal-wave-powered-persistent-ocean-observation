@@ -18,44 +18,11 @@ for i = 1:opt.S
         opt.tuned_parameter ' tuned to ' ...
         num2str(opt.tuning_array(opt.s)) '.'])
     %update tuned parameter
-    if isequal(opt.tuned_parameter,'wcp')
-        wave.cutout_prctile = opt.tuning_array(i);
-    end
-    if isequal(opt.tuned_parameter,'wrp')
-        wave.rated_prctile = opt.tuning_array(i);
-    end
     if isequal(opt.tuned_parameter,'wes')
         econ.wave.enf_scen = opt.tuning_array(:,i);
     end
     if isequal(opt.tuned_parameter,'utp')
         uc(c).uptime = opt.tuning_array(i);
-    end
-    if isequal(opt.tuned_parameter,'load')
-        uc(c).draw = opt.tuning_array(i);
-    end
-    if isequal(opt.tuned_parameter,'zo')
-        atmo.zo = opt.tuning_array(i);
-    end
-    if isequal(opt.tuned_parameter,'imf')
-        econ.inso.marinization = opt.tuning_array(i);
-    end
-    if isequal(opt.tuned_parameter,'btm')
-        batt.t_add_m = opt.tuning_array(i);
-    end
-    if isequal(opt.tuned_parameter,'mbt')
-        batt.t_add_min = opt.tuning_array(i);
-    end
-    if isequal(opt.tuned_parameter,'mzm')
-        econ.wind.marinization = opt.tuning_array(i);
-    end
-    if isequal(opt.tuned_parameter,'sbm')
-        turb.spar_bm = opt.tuning_array(i);
-    end
-    if isequal(opt.tuned_parameter,'tiv')
-        uc(c).turb.lambda = opt.tuning_array(i);
-    end
-    if isequal(opt.tuned_parameter,'twf')
-        turb.wf = opt.tuning_array(i);
     end
     if isequal(opt.tuned_parameter,'ild')
         uc(c).draw = opt.tuning_array(i);

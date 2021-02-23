@@ -6,7 +6,7 @@ opt.bf.n = 1;
 opt.allscenuses = 0;
 opt.alllocuses = 0;
 opt.sens = 0; %sensitivity analysis (see line 177)
-opt.senssm = 0;
+opt.senssm = 1;
 c = 1;  %use case 1:ST 2:LT
 loc = 'irmSea'; %location
 if ~exist('batchtype','var')
@@ -154,30 +154,10 @@ uc(2).dies.lambda = 1;          %diesel interventions
 %if conducting an interactive sensitivity analysis, specify the tuning 
 %array and the tuned parameter here
 if ~isfield(opt,'tuning_array') && ~isfield(opt,'tuned_parameter')
-    % opt.tuning_array = [100 95 90 85 80 75 70];
-    % opt.tuned_parameter = 'wcp'; %wave cutout percentile
-    % opt.tuning_array = [1 2 3 4 5 6 7 8 9 10];
-    % opt.tuned_parameter = 'wcm'; %wave cost multiplier
-    % opt.tuning_array = [45 50 55 60 65 70 75 80 85 90];
-    % opt.tuned_parameter = 'wrp'; %wave rated percentile
     % opt.tuning_array = linspace(.80,1,10);
     % opt.tuned_parameter = 'utp';
     % opt.tuning_array = [10:10:200];
-    % opt.tuned_parameter = 'load';
-    % opt.tuning_array = [0.01,0.2,.5];
-    % opt.tuned_parameter = 'zo';
-    % opt.tuning_array = [0,1,2,3,4,5];
-    % opt.tuned_parameter = 'utf';
-    % opt.tuning_array = [0 .01 .025 .05 .075 .1 .15 .2 .25];
     % opt.tuned_parameter = 'whl'; %wec house load
-    % opt.tuning_array = [1 1.2 1.4 1.6 1.8 2];
-    % opt.tuned_parameter = 'imf'; %inso marinization factor
-    % opt.tuning_array = linspace(0.1,10,10);
-    % opt.tuned_parameter = 'btm'; %battery time slope
-    % opt.tuning_array = [10 20 30 40 50 60 70 80 90 100];
-    % opt.tuned_parameter = 'mbt'; %minimum battery for time added
-    % opt.tuning_array = linspace(1/2,2,10);
-    % opt.tuned_parameter = 'cwm'; %capture width multiplier
     % opt.tuning_array = 1:1:10;
     % opt.tuned_parameter = 'wcm'; %wave cost multiplier
     % opt.tuning_array = linspace(0,9,50);
