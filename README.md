@@ -1,5 +1,5 @@
 # cost-optimal-wave-powered-persistent-ocean-observation
-This is the open source code repository for the journal article Cost-Optimal Wave-Powered Persistent Oceanographic Observation, submitted to Renewable Energy by Trent Dillon, Ben Maurer, Michael Lawson, Dale "Scott" Jenne, Dana Manalang and Brian Polagye. This contains only the code required to run the techno-economic model described in this paper. The living repository, which contains additional code (e.g., visualization scripts) can be found here: https://github.com/tmaxdillon/OO-TechEc
+This is the open source code repository for the journal article Cost-Optimal Wave-Powered Persistent Oceanographic Observation, submitted to Renewable Energy by Trent Dillon, Ben Maurer, Michael Lawson, Dale "Scott" Jenne, Dana Manalang, Elena Blackman and Brian Polagye. This contains only the code required to run the techno-economic model described in this paper. The living repository, which contains additional code (e.g., visualization scripts) can be found here: https://github.com/tmaxdillon/OO-TechEc
 
 # How to run the code:
 There are two ways to run the techno-economic model, either through the optScript.m script (output does not save to a .mat file) or through the optSave.m function (output to a .mat file):
