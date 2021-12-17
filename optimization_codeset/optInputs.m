@@ -69,12 +69,13 @@ econ.platform.mdd.cost = cost;          %mooring cost lookup matrix
 econ.platform.mdd.depth = depth;        %mooring cost lookup depth
 econ.platform.mdd.diameter = diameter;  %mooring cost lookup diameter
 clear cost depth diameter e_subsurface e_tension w_tension
-econ.platform.t_i = 12;             %[h] additional time on site for inst
+econ.platform.t_i = [6 12];         %[h] added h for inst
+econ.platform.d_i = [500 5000];     %[m] depth for inst cost
 %vessel
 econ.vessel.osvcost = 15000;        %[$/day]
 econ.vessel.speed = 10;             %[kts]
 econ.vessel.t_mosv = 6;             %[h] time on site for maint (osv)
-econ.vessel.speccost = 70000;       %[$/day] 
+econ.vessel.speccost = 50000;       %[$/day] 
 econ.vessel.t_ms = 2;               %[h] time on site for maint (spec)
 %battery 
 econ.batt.enclmult = 1;             %multiplier on battery cost for encl
@@ -89,7 +90,6 @@ econ.wave.highfail = 1;              %failure per year (conservative)
 
 %ENERGY
 %wave energy parameters
-wave.method = 2;            %1: divide by B, 2: 3d interpolation
 wave.B_func_n = 1000;       %number of points in B(Gr) function
 wave.Hs_ra = 4;             %[m], rated wave height
 wave.Tp_ra = 9;            %[s], rated peak period

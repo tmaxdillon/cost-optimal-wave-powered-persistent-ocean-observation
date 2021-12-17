@@ -117,9 +117,10 @@ elseif bc == 2 %lithium phosphate
     Scost = batt.cost*Smax;
 end
 battencl = econ.batt.enclmult*Scost; %battery enclosure cost
-Pmtrl = 0;
-Pinst = econ.vessel.speccost* ...
-    ((econ.platform.t_i)/24); %platform instllation
+Pmtrl = 0; %platform material cost - considered zero
+t_i = interp1(econ.platform.d_i,econ.platform.t_i,depth, ...
+    'linear','extrap'); %installation time
+Pinst = econ.vessel.speccost*(t_i/24); %platform instllation
 dp = width;
 if dp < 1, dp = 1; end
 if dp < 4 %within bounds, use linear interpolation
